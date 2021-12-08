@@ -20,12 +20,12 @@ terraform {
 }
 
 data "opennebula_group" "users" {
-  count = 8
+  count = 9
   name = "users-${count.index+1}"
 }
 
 resource "opennebula_virtual_network" "priv-net" {
-  count = 8
+  count = 9
   name = "net-${count.index+1}"
   bridge = "net-${count.index+1}"
   physical_device = "eno1"
@@ -59,7 +59,7 @@ data "opennebula_virtual_network" "public" {
 }
 
 data "opennebula_virtual_network" "private" {
-  count = 8
+  count = 9
   name = "net-${count.index+1}"
 }
 
@@ -93,31 +93,9 @@ data "opennebula_template" "centos" {
   name = "CentOS 8"
 }
 
-resource "opennebula_virtual_machine" "DC" {
-  count = 8
-  name = "DC-${count.index+1}"
-  template_id = data.opennebula_template.WinGUI.id
-  permissions = 640
-  group = data.opennebula_group.users[count.index].name
-  
-  pending = true
-
-  context = {
-    SET_HOSTNAME = "$NAME"
-    PASSWORD = "P@ssw0rd"
-  }
-
-  nic {
-    model = "virtio"
-    network_id = data.opennebula_virtual_network.private[count.index].id
-    ip = "${var.private_subnet[0]}2"
-  }
-
-}
-
-resource "opennebula_virtual_machine" "CS" {
-  count = 8
-  name = "CS-${count.index+1}"
+resource "opennebula_virtual_machine" "Wingui" {
+  count = 9
+  name = "WS-2-${count.index+1}"
   template_id = data.opennebula_template.WinGUI.id
   permissions = 640
   group = data.opennebula_group.users[count.index].name
